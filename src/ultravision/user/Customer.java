@@ -2,13 +2,14 @@ package ultravision.user;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 public class Customer {
-	
-	
+
 	private String id, name, type, loyaltypoints, balance;
 	
 	
@@ -50,8 +51,6 @@ public class Customer {
 
 				}
 				
-//				System.out.println( id + "\n" + name+ 
-//				"\t" + "\n" + type+ "\n" + loyaltypoints + "\n"+ balance);
 				rs.close() ;
 				stmt.close() ;
 				conn.close() ;
@@ -73,6 +72,61 @@ public class Customer {
 			}
 		}
 		
+	}
+	
+	public void addCustDB(String[] newCust) {
+		{
+			try{
+				// Load the database driver
+				Class.forName("com.mysql.jdbc.Driver").newInstance() ;
+				
+				String dbServer = "jdbc:mysql://localhost:3306/ultraVision";
+				String user = "root";
+				String password = "ImpossibleToBreak2019!";
+				String query = "INSERT INTO customers (fullname, type)"
+						+ " values(?,?)";
+
+				// Get a connection to the database
+				Connection conn = DriverManager.getConnection(dbServer, user, password) ;
+
+				
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+			      preparedStmt.setString (1, newCust[0]);
+			      preparedStmt.setString (2, newCust[1]);
+				
+				// Get a statement from the connection
+//				Statement stmt = conn.createStatement() ;
+
+				// Execute the query
+				preparedStmt.execute() ;
+				
+//				preparedStmt.close();
+				conn.close() ;
+			}
+		
+				catch( SQLException se ){
+					System.out.println( "SQL Exception:" ) ;
+
+					// Loop through the SQL Exceptions
+					while( se != null ){
+						System.out.println( "State  : " + se.getSQLState()  ) ;
+						System.out.println( "Message: " + se.getMessage()   ) ;
+						System.out.println( "Error  : " + se.getErrorCode() ) ;
+
+						se = se.getNextException() ;
+					}
+				}
+				catch( Exception e ){
+					System.out.println( e ) ;
+				}
+				
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return name + "\n" + " Membership status > " + type + 
+				  "\n Loyalty points > " + loyaltypoints + "\n Balance > "+ balance;
 	}
 
 	public String getId() {

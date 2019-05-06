@@ -11,13 +11,17 @@ public class User implements UserInterface{
 	
 	static String custName = null;
 	private static String title;
-	Rental rental = new Rental();
-	
+	Rental rental;
+	Customer cust1;
+	Title titleName;
+	String[] newCust = new String[2];
 	
 	public User() {
 		homeScreen();
-//		System.out.println(rental);
-		
+		titleName = new Title(title);
+		cust1 = new Customer(custName);
+		cust1.addCustDB(newCust);
+		System.out.println(cust1);
 		
 	}
 	
@@ -28,8 +32,6 @@ public class User implements UserInterface{
 		BufferedReader br = new BufferedReader(in);
 		String input;
 		try {
-//			System.out.println("Please enter customer name: ");
-//			custName = br.readLine();
 			
 			System.out.println("Please select one option: \n"
 					+ "(1) Search Customer\n"
@@ -43,19 +45,19 @@ public class User implements UserInterface{
 			input = br.readLine();
 	
 			if(input.equals("1")) {
-				System.out.println("Option 1");
+				findCustomer();
 			}else if(input.equals("2")){
 				findTitle();
 			}else if(input.equals("3")){
-				System.out.println("Option 3");
+				addCustomer();
 			}else if(input.equals("4")){
-				System.out.println("Option 4");
+				addTitle();
 			}else if(input.equals("5")){
-				System.out.println("Option 5");
+				updateCustomer();
 			}else if(input.equals("6")){
-				System.out.println("Option 6");
+				registerRental();
 			}else if(input.equals("7")){
-				System.out.println("Option 7");
+				registerReturn();
 			}else {
 				System.out.println("Invalid option. Please try again...");
 				homeScreen();
@@ -65,13 +67,19 @@ public class User implements UserInterface{
 			e.printStackTrace();
 		}
 		
-		
-		
-		
 	}
 	
 	@Override
 	public void findCustomer() {
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		try {
+			System.out.println("Please enter customer fullname: ");
+			custName = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -91,6 +99,23 @@ public class User implements UserInterface{
 	
 	@Override
 	public void addCustomer() {
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		int counter = 0;
+		String [] columns = {"Fullname", "Membership Type"}; 
+		try {
+			do {
+			System.out.println("Please enter the " + columns[counter]+ ": ");
+			input = br.readLine();
+			newCust[counter] = input;
+			counter++;
+			}while(counter < 2);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 	
@@ -116,13 +141,6 @@ public class User implements UserInterface{
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
-		new User();
-//		Customer cust1 = new Customer(custName);
-//		MembershipCard memberC = new MembershipCard();
-//		
-		Title titleName = new Title(title);
-		System.out.println(titleName);
-		
+		new User();		
 	}
 }
