@@ -15,14 +15,18 @@ public class User implements UserInterface{
 	Customer cust1;
 	Title titleName;
 	String[] newCust = new String[2];
+	String[] newTitle = new String[5];
 	
 	public User() {
 		homeScreen();
 		titleName = new Title(title);
 		cust1 = new Customer(custName);
-		cust1.addCustDB(newCust);
+		if(title != null) {
+			System.out.println(titleName);
+		}
+		else if(custName != null) {
 		System.out.println(cust1);
-		
+		}
 	}
 	
 	@Override
@@ -115,12 +119,52 @@ public class User implements UserInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		cust1.addCustDB(newCust);
 		
 	}
 	
 	@Override
 	public void addTitle() {
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		int counter = 0;
+		String [] columns = {}; 
+		String[] moviesColumns = {"Media", "Year of Release", "Title", "Genre", "Director"};
+		String[] musicColumns = {"Year of Release", "Title", "Band"};
+		String[] concertsColumns = {"Media", "Year of Release", "Title", "Band"};
+
+		System.out.println("Please enter Title type(1-Video, 2-CD, 3-Concert): ");
+		try {
+			input= br.readLine();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if (input.equals("1")) {
+			columns = moviesColumns;
+		}else if(input.equals("2")) {
+			columns = musicColumns;
+		}else if(input.equals("3")) {
+			columns = concertsColumns;
+		}else if(input.equals("exit")){
+			homeScreen();
+		}else {
+			System.out.println("Invalid type. Let's try again...");
+			addTitle();
+		}
+		try {
+			do {
+			System.out.println("Please enter the " + columns[counter]+ ": ");
+			input = br.readLine();
+			newTitle[counter] = input;
+			counter++;
+			}while(counter < columns.length);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		titleName.addTitleDB(newTitle);
 		
 	}
 	
