@@ -113,6 +113,8 @@ public class Title {
 	
 	public void addTitleDB(String[] newTitle) {
 		{
+			
+			
 			try{
 				// Load the database driver
 				Class.forName("com.mysql.jdbc.Driver").newInstance() ;
@@ -120,28 +122,41 @@ public class Title {
 				String dbServer = "jdbc:mysql://localhost:3306/ultraVision";
 				String user = "root";
 				String password = "ImpossibleToBreak2019!";
-				String queryMusic = "INSERT INTO musicCD (fullname, type)"
-						+ " values(?,?)";
-				String queryConcert = "INSERT INTO concerts (fullname, type)"
-						+ " values(?,?)";
-				String queryMovie = "INSERT INTO movies (fullname, type)"
-						+ " values(?,?)";
-
+				String queryMusic = "INSERT INTO musicCD (releaseYear, title, band)"
+						+ " values(?,?,?)";
+				String queryConcert = "INSERT INTO concerts (media, releaseYear, title, band)"
+						+ " values(?,?,?,?)";
+				String queryMovie = "INSERT INTO movies (media, releaseYear, title, genre, director)"
+						+ " values(?,?,?,?,?)";
+				
 				// Get a connection to the database
 				Connection conn = DriverManager.getConnection(dbServer, user, password) ;
-
 				
-				PreparedStatement preparedStmt = conn.prepareStatement(query);
-			      preparedStmt.setString (1, newTitle[0]);
-			      preparedStmt.setString (2, newTitle[1]);
-				
-				// Get a statement from the connection
-//				Statement stmt = conn.createStatement() ;
+				PreparedStatement preparedStmt;
+				if(newTitle.length == 3) {
+					preparedStmt = conn.prepareStatement(queryMusic);
+				      preparedStmt.setString (1, newTitle[0]);
+				      preparedStmt.setString (2, newTitle[1]);
+				      preparedStmt.setString (3, newTitle[2]);
+				}else if(newTitle.length == 4){
+					preparedStmt = conn.prepareStatement(queryConcert);
+				      preparedStmt.setString (1, newTitle[0]);
+				      preparedStmt.setString (2, newTitle[1]);
+				      preparedStmt.setString (3, newTitle[2]);
+				      preparedStmt.setString (4, newTitle[3]);
+				}else {
+					preparedStmt = conn.prepareStatement(queryMovie);
+				      preparedStmt.setString (1, newTitle[0]);
+				      preparedStmt.setString (2, newTitle[1]);
+				      preparedStmt.setString (3, newTitle[2]);
+				      preparedStmt.setString (4, newTitle[3]);
+				      preparedStmt.setString (5, newTitle[4]);
+				}
 
 				// Execute the query
 				preparedStmt.execute() ;
 				
-//				preparedStmt.close();
+				//Close the connection
 				conn.close() ;
 			}
 		

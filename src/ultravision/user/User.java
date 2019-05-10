@@ -20,13 +20,9 @@ public class User implements UserInterface{
 	public User() {
 		homeScreen();
 		titleName = new Title(title);
-		cust1 = new Customer(custName);
-		if(title != null) {
-			System.out.println(titleName);
-		}
-		else if(custName != null) {
-		System.out.println(cust1);
-		}
+//		cust1 = new Customer(custName);
+		titleName.addTitleDB(newTitle);
+	
 	}
 	
 	@Override
@@ -164,7 +160,7 @@ public class User implements UserInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		titleName.addTitleDB(newTitle);
+		
 		
 	}
 	
