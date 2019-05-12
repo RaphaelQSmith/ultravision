@@ -9,20 +9,18 @@ import ultravision.interfaces.UserInterface;
 
 public class User implements UserInterface{
 	
-	static String custName = null;
-	private static String title;
+	String custName = null;
+	String returnTitle = null;
+	private String[] title = new String[2];
 	Rental rental;
 	Customer cust1;
 	Title titleName;
 	String[] newCust = new String[2];
 	String[] newTitle = new String[5];
+	String[] newRental = new String[3];
 	
 	public User() {
 		homeScreen();
-		titleName = new Title(title);
-//		cust1 = new Customer(custName);
-		titleName.addTitleDB(newTitle);
-	
 	}
 	
 	@Override
@@ -69,6 +67,27 @@ public class User implements UserInterface{
 		
 	}
 	
+	public void backToMenu() {
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		try {
+			System.out.println("Would you like to return to the Main Menu?(Y/N)");
+			input = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(input.equals("Y") || input.equals("y")) {
+			homeScreen();
+		}else if(input.equals("N") || input.equals("n")) {
+			System.out.println("Good Bye!");
+		}else {
+			System.out.println("That's not a valid option. Please try again...");
+			backToMenu();
+		}
+	}
+	
 	@Override
 	public void findCustomer() {
 		InputStreamReader in = new InputStreamReader(System.in);
@@ -80,21 +99,46 @@ public class User implements UserInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		cust1 = new Customer(custName);
+		if(cust1.getName() == null) {
+			System.out.println("Customer not found. Try a valid name...");
+			findCustomer();
+		}else {
+			System.out.println(cust1 + "\n");
+			backToMenu();
+		}
 	}
 	
 	@Override
 	public void findTitle() {
 		InputStreamReader in = new InputStreamReader(System.in);
 		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		System.out.println("Please enter Title type(1-Video, 2-CD, 3-Concert): ");
 		try {
-			System.out.println("Please enter the title: ");
-			title = br.readLine();
-		} catch (IOException e) {
+			input = br.readLine();
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-	
+		if (input.equals("1") || input.equals("2") || input.equals("3")) {
+			try {
+				System.out.println("Please enter the title: ");
+				title[0] = input;
+				title[1] = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			titleName = new Title(title);
+			titleName.searchTitle(title);
+			backToMenu();
+		}else {
+			System.out.println("Invalid Option. Try again: ");
+			findTitle();
+		}
+		
+		
 	}
 	
 	@Override
@@ -115,7 +159,14 @@ public class User implements UserInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		cust1.addCustDB(newCust);
+		if(newCust[1].equals("VL")||newCust[1].equals("ML")
+				||newCust[1].equals("TV")||newCust[1].equals("PR")) {
+			cust1.addCustDB(newCust);
+			backToMenu();
+		}else {
+			System.out.println("Wrong Membership Type. Please choose between: (ML)(VL)(TV)(PR)");
+			addCustomer();
+		}
 		
 	}
 	
@@ -126,7 +177,7 @@ public class User implements UserInterface{
 		String input = "";
 		int counter = 0;
 		String [] columns = {}; 
-		String[] moviesColumns = {"Media", "Year of Release", "Title", "Genre", "Director"};
+		String[] moviesColumns = {"Media(Bluray, DVD or CD)", "Year of Release", "Title", "Genre", "Director"};
 		String[] musicColumns = {"Year of Release", "Title", "Band"};
 		String[] concertsColumns = {"Media", "Year of Release", "Title", "Band"};
 
@@ -160,23 +211,84 @@ public class User implements UserInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+		titleName = new Title(title);
+		titleName.addTitleDB(newTitle);
+		backToMenu();
 	}
 	
 	@Override
 	public void updateCustomer() {
-		
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		int counter = 0;
+		String [] columns = {"Fullname", "Membership Type(VL, ML, TV or PR)"}; 
+		try {
+			do {
+			System.out.println("Please enter the " + columns[counter]+ ": ");
+			input = br.readLine();
+			newCust[counter] = input;
+			counter++;
+			}while(counter < 2);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cust1 = new Customer(newCust[0]);
+		if(newCust[1].equals("VL")||newCust[1].equals("ML")
+				||newCust[1].equals("TV")||newCust[1].equals("PR")) {
+			cust1.updtCustDB(newCust);
+			backToMenu();
+		}else {
+			System.out.println("Wrong Membership Type. Please choose between: 'ML', 'VL', 'TV', 'PR'");
+			updateCustomer();
+		}
 	}
+	
 	
 	@Override
 	public void registerRental() {
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		String input = "";
+		int counter = 0;
+		String [] columns = {"Title", "Media", "customer"}; 
+		try {
+			do {
+			System.out.println("Please enter the " + columns[counter]+ ": ");
+			input = br.readLine();
+			newRental[counter] = input;
+			counter++;
+			}while(counter < 3);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		rental = new Rental();
+		if(newRental[1].equals("Bluray")||newRental[1].equals("DVD")||newRental[1].equals("CD")) {
+			rental.registerRental(newRental);
+			backToMenu();
+		}else {
+			System.out.println("Media must be 'Bluray', 'DVD' or 'CD'. Try again...\n");
+			registerRental();
+		}
 		
 	}
 	
 	@Override
 	public void registerReturn() {
-		
+		InputStreamReader in = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(in);
+		try {
+			System.out.println("Please enter the title to be returned: ");
+			returnTitle = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		rental = new Rental();
+		rental.returnTitle(returnTitle);
+		backToMenu();
 	}
 	
 	public static void main(String[] args) {

@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 public class Customer {
 
@@ -14,12 +13,12 @@ public class Customer {
 	
 	
 	public Customer(String fullname) { //Constructor
-		dbRequest(fullname);
+		findCust(fullname);
 		
 	}
 	
 
-	private void dbRequest(String fullname) {
+	public void findCust(String fullname) {
 		{
 			try{
 				// Load the database driver
@@ -93,14 +92,11 @@ public class Customer {
 				PreparedStatement preparedStmt = conn.prepareStatement(query);
 			      preparedStmt.setString (1, newCust[0]);
 			      preparedStmt.setString (2, newCust[1]);
-				
-				// Get a statement from the connection
-//				Statement stmt = conn.createStatement() ;
 
 				// Execute the query
 				preparedStmt.execute() ;
 				
-//				preparedStmt.close();
+				//close connection
 				conn.close() ;
 			}
 		
@@ -121,6 +117,52 @@ public class Customer {
 				}
 				
 		}
+	}
+	
+	public void updtCustDB(String[] upCust) {
+		{
+			try{
+				// Load the database driver
+				Class.forName("com.mysql.jdbc.Driver").newInstance() ;
+				
+				String dbServer = "jdbc:mysql://localhost:3306/ultraVision";
+				String user = "root";
+				String password = "ImpossibleToBreak2019!";
+				String query = "UPDATE customers SET type=? WHERE fullname=?";
+
+				// Get a connection to the database
+				Connection conn = DriverManager.getConnection(dbServer, user, password) ;
+
+				// Populate query with new info
+				PreparedStatement preparedStmt = conn.prepareStatement(query);
+			      preparedStmt.setString (1, upCust[1]);
+			      preparedStmt.setString (2, upCust[0]);
+
+				// Execute the query with prepared statement
+				preparedStmt.execute();
+				
+				//close connection
+				conn.close() ;
+			}
+		
+				catch( SQLException se ){
+					System.out.println( "SQL Exception:" ) ;
+
+					// Loop through the SQL Exceptions
+					while( se != null ){
+						System.out.println( "State  : " + se.getSQLState()  ) ;
+						System.out.println( "Message: " + se.getMessage()   ) ;
+						System.out.println( "Error  : " + se.getErrorCode() ) ;
+
+						se = se.getNextException() ;
+					}
+				}
+				catch( Exception e ){
+					System.out.println( e ) ;
+				}
+				
+		}
+		
 	}
 	
 	@Override

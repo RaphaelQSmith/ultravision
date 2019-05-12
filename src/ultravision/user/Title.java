@@ -9,14 +9,14 @@ import java.sql.Statement;
 
 public class Title {
 	
-	String id, media, release, name, genre, director, band;
+	String id, media, release, name, genre, director, band, concertTitle;
 	
 	
-	public Title(String title) {
-		searchTitle(title);
+	public Title(String [] title) {
+		
 	}
 	
-	public void searchTitle(String title){
+	public void searchTitle(String[] title){
 		{
 			try{
 				// Load the database driver
@@ -25,9 +25,9 @@ public class Title {
 				String dbServer = "jdbc:mysql://localhost:3306/ultraVision";
 				String user = "root";
 				String password = "ImpossibleToBreak2019!";
-				String queryMovie = "SELECT * FROM movies where title="+"'"+ title+ "'";
-				String queryMusic = "SELECT * FROM musicCD where title="+"'"+ title+ "'";
-				String queryConcert = "SELECT * FROM concerts where title="+"'"+ title+ "'";
+				String queryMovie = "SELECT * FROM movies where title="+"'"+ title[1]+ "'";
+				String queryMusic = "SELECT * FROM musicCD where title="+"'"+ title[1]+ "'";
+				String queryConcert = "SELECT * FROM concerts where title="+"'"+ title[1]+ "'";
 
 				// Get a connection to the database
 				Connection conn = DriverManager.getConnection(dbServer, user, password) ;
@@ -42,7 +42,7 @@ public class Title {
 				ResultSet rsMusic = stmt2.executeQuery(queryMusic) ;
 				ResultSet rsConcert = stmt3.executeQuery(queryConcert) ;
 				
-				if(rsMovie != null) {
+				if(title[0].equals("1")) {
 					while(rsMovie.next()) {
 						//Populate variables with customer details from database
 						id = rsMovie.getString("id");
@@ -51,39 +51,36 @@ public class Title {
 						genre = rsMovie.getString("genre");
 						director = rsMovie.getString("director");
 						media = rsMovie.getString("media");
-
+						
 					}
-					
-				}else if(rsMusic != null){
+					System.out.println("Title - "+ name + "\n"+ "Released - "
+										+ release +"\n" + "Genre - " + genre+ "\n"
+										+ "Director - " + director + "\n");
+				}else if(title[0].equals("2")){
 					while(rsMusic.next()) {
 						//Populate variables with customer details from database
 						id = rsMusic.getString("id");
 						name =rsMusic.getString("title");
 						band = rsMusic.getString("band");
 						release = rsMusic.getString("releaseYear");
-
+						
 					}
-					
-				}else if(rsConcert != null) {
+					System.out.println("Title - "+ name + "\n"+ "Released - "
+										+ release +"\n" + "Band - " + band + "\n");
+				}else if(title[0].equals("3")) {
 					while(rsConcert.next()) {
 						//Populate variables with customer details from database
 						id = rsConcert.getString("id");
-						name =rsConcert.getString("fullname");
-						band = rsConcert.getString("type");
-						release = rsConcert.getString("loyaltypoints");
-						media = rsConcert.getString("media");
-
+						media =rsConcert.getString("media");
+						release = rsConcert.getString("releaseYear");
+						concertTitle = rsConcert.getString("title");
+						band = rsConcert.getString("band");
 					}
-					
+					System.out.println("Title - "+ concertTitle + "\n Band - " + band + "\n Released - "
+										+ release + "\n Media - " + media + "\n");
 				}else {
 					System.out.println("Title not found. Try again...");
 				}
-				
-				// Loop through the result set
-				
-				
-//				System.out.println( id + "\n" + name+ 
-//				"\t" + "\n" + type+ "\n" + loyaltypoints + "\n"+ balance);
 				rsMovie.close() ;
 				rsConcert.close() ;
 				rsMusic.close() ;
@@ -109,12 +106,11 @@ public class Title {
 			}
 		}
 		
+		
 	}
 	
 	public void addTitleDB(String[] newTitle) {
 		{
-			
-			
 			try{
 				// Load the database driver
 				Class.forName("com.mysql.jdbc.Driver").newInstance() ;
@@ -133,24 +129,25 @@ public class Title {
 				Connection conn = DriverManager.getConnection(dbServer, user, password) ;
 				
 				PreparedStatement preparedStmt;
-				if(newTitle.length == 3) {
-					preparedStmt = conn.prepareStatement(queryMusic);
+				if(newTitle[4] != null) {
+				      preparedStmt = conn.prepareStatement(queryMovie);
 				      preparedStmt.setString (1, newTitle[0]);
 				      preparedStmt.setString (2, newTitle[1]);
 				      preparedStmt.setString (3, newTitle[2]);
-				}else if(newTitle.length == 4){
+				      preparedStmt.setString (4, newTitle[3]);
+				      preparedStmt.setString (5, newTitle[4]);
+				}else if(newTitle[3] != null){
 					preparedStmt = conn.prepareStatement(queryConcert);
 				      preparedStmt.setString (1, newTitle[0]);
 				      preparedStmt.setString (2, newTitle[1]);
 				      preparedStmt.setString (3, newTitle[2]);
 				      preparedStmt.setString (4, newTitle[3]);
 				}else {
-					preparedStmt = conn.prepareStatement(queryMovie);
+					preparedStmt = conn.prepareStatement(queryMusic);
 				      preparedStmt.setString (1, newTitle[0]);
 				      preparedStmt.setString (2, newTitle[1]);
 				      preparedStmt.setString (3, newTitle[2]);
-				      preparedStmt.setString (4, newTitle[3]);
-				      preparedStmt.setString (5, newTitle[4]);
+				      
 				}
 
 				// Execute the query
@@ -179,12 +176,6 @@ public class Title {
 		}
 	}
 	
-	
-
-	@Override
-	public String toString() {
-		return "Title - "+ name + "\n"+ "Released - "+ release +"\n" + "Genre - " + genre+ "\n"+ "Director - " + director + "\n";
-	}
 	public String getId() {
 		return id;
 	}
